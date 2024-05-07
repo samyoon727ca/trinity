@@ -1,6 +1,4 @@
-# main.py
 import random
-
 from ai.creator import CreatorAI
 from ai.preserver import PreserverAI
 from ai.destroyer import DestroyerAI
@@ -11,32 +9,28 @@ def main():
     preserver = PreserverAI()
     destroyer = DestroyerAI()
 
-    # initial_prompt = """
-    # """
-
-    conversation = Conversation(creator, preserver, destroyer)
-
-    num_steps = 7
+    conversation_history = []  # Initialize empty conversation history
+    num_steps = 1
     current_step = 0
 
-    conversation_history = []  # Initialize empty conversation history
+    while True:  # Outer loop to continue the conversation
+        while current_step < num_steps:
+            conversation = Conversation(creator, preserver, destroyer)
+            conversation.start(conversation_history)
+            conversation_history.extend(conversation.conversation_history)
+            current_step += 1
 
-    while current_step < num_steps:
-        conversation = Conversation(creator, preserver, destroyer)  # Create new Conversation object
-        conversation.start(conversation_history)  # Pass conversation history as argument
-        conversation_history.extend(conversation.conversation_history)  # Update conversation history
-        current_step += 1
-
-
-    # User prompt to continue (same logic as before)
-    while True:
         continue_choice = input("Continue the conversation (y/n)? ").lower()
-        if continue_choice == "y":
-            num_steps += 3
-            break
-        elif continue_choice == "n":
+
+        if continue_choice == "n":
             print("Conversation terminated.")
             break
+
+        elif continue_choice == "y":
+            num_steps += 1
+            current_step = 0
+            continue
+
         else:
             print("Invalid input. Please enter 'y' or 'n'.")
 
